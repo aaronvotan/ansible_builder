@@ -1,0 +1,34 @@
+---
+- name: Playbook to create custom EE
+  hosts: workstation-1.example.com
+  gather_facts: false
+  vars_files:
+    - common.yml
+    - "{{__build}}.yml"
+  roles:
+    - infra.ee_utilities.ee_builder
+
+  pre_tasks:
+    - name: Create the path for builder
+      ansible.builtin.file:
+        path: "{{ builder_dir }}/context"
+        state: directory
+        mode: 0755
+      when: builder_dir is defined
+
+    - name: Copy extra files to workstion
+      ansible.builtin.copy:
+        src: "files/{{ __build }}/{{ item }}"
+        dest: "{{ builder_dir }}/context"
+        mode: 0644
+      loop: "{{ included_files }}"
+      when: builder_dir is defined and included_files is defined
+
+    - name: Copy certs to context
+      ansible.builtin.copy:
+        src: "/etc/pki/ca-trust/source/anchors/{{ item }}"
+        dest: "{{ builder_dir }}/context"
+        mode: 0644
+      loop: "{{ included_certs }}"
+      when: builder_dir is defined and included_certs is defined
+
