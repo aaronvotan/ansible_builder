@@ -1,6 +1,6 @@
 # ansible_builder
 
-This repository contains files and playbooks to automate the creation of a custom execution environment (EE) using Ansible Automation Controller. The main playbook `build.yml` is responsible for creating the custom EE.
+This repository contains files and playbooks to automate the creation of a custom execution environment (EE) using Ansible Automation Controller. The main playbook `build.yml` is responsible for creating the custom EE. Reference the `infra.ee_utilities` collcetion in the Red Hat COP for more info. <https://github.com/redhat-cop/ee_utilities/tree/2.0.8/roles/ee_builder>
 
 ## Prerequisites
 Before using this repository, ensure that the following requirements are met:
@@ -23,6 +23,6 @@ Before using this repository, ensure that the following requirements are met:
 
 - `common.yml`: Configuration file containing variables used in the playbook. Modify this file to customize the environment settings.
 
-- `cisco.yml`: Example file specifying the files, certificates, and dependencies required for the custom EE. Modify this file according to your specific needs.
+- `cisco.yml`: Example file specifying the files, certificates, and dependencies required for the custom EE. Modify this file according to your specific needs. I've only included the krb5.conf and certs here to show an example of how to include files; you wouldn't need to include them and I generally don't. 
 
 Feel free to explore the repository and adapt it to your requirements. If you have any questions reach out.
