@@ -1,39 +1,33 @@
 ---
-included_certs:
-  - cert1.cer
-  - cert2.cer
-included_files:
-  - krb5.conf
-builder_dir: /tmp/builder
 ee_list:
   - name: aap_cisco_ee
-    bindep:
-      - python38-requests [platform:rhel-8]
-      - python38-pyyaml [platform:rhel-8]
-      - bind-utils [platform:rpm]
-      - iputils [platform:rpm]
-      - python3-jmespath [platform:rpm]
-    python:
-      - ansible-pylibssh # for authentication
-      - pytz  # for schedule_rrule lookup plugin
-      - python-dateutil>=2.7.0  # schedule_rrule
-      - infoblox-client
-      - ansible-runner==2.3.2
-      - ansible-lint[lock]==6.14.4
-      - molecule==4.0.4
-      - molecule-podman==2.0.3
-      - jmespath==1.0.1
-    collections:
-      - name: cisco.dnac
-      - name: cisco.ios
-      - name: cisco.nxos
-      - name: ansible.netcommon
-      - name: community.general
-      - name: cisco.ise
-    append:
-      - COPY cert1.cer /etc/pki/ca-trust/source/anchors/
-      - COPY cert2.cer /etc/pki/ca-trust/source/anchors/
-      - RUN update-ca-trust
-      - COPY krb5.conf /etc/krb5.conf
-      - RUN echo "Build Complete"
-
+    tag: "{{ ansible_date_time.iso8601_basic_short }}"
+    dependencies:
+      system:
+        - python38-requests [platform:rhel-8]
+        - python38-pyyaml [platform:rhel-8]
+        - bind-utils [platform:rpm]
+        - iputils [platform:rpm]
+        - python3-jmespath [platform:rpm]
+        - net-snmp-libs [platform:rpm]
+        - net-snmp-utils [platform:rpm]
+      python:
+        - ansible-pylibssh  # for authentication
+        - pytz   # for schedule_rrule lookup plugin
+        - python-dateutil>=2.7.0   # schedule_rrule
+        - infoblox-client
+        - hvac  # for hashi_vault plugin
+      galaxy:
+        collections:
+          - name: ansible.netcommon
+          - name: cisco.dnac
+          - name: cisco.ios
+          - name: cisco.ise
+          - name: cisco.nxos
+          - name: community.general
+          - name: community.hashi_vault
+          - name: uscis.networking
+    build_steps:
+      prepend_final:
+        - RUN microdnf install crypto-policies-scripts && update-crypto-policies --set DEFAULT:AD-SUPPORT
+        - RUN echo "Build Complete"

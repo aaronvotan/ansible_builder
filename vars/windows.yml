@@ -1,0 +1,33 @@
+---
+ee_list:
+  - name: aap_windows_ee
+    tag: "{{ ansible_date_time.iso8601_basic_short }}"
+    build_files:
+      - src: files/windows/krb5.conf
+        dest: windows
+    build_items:
+      - files/
+    dependencies:
+      system:
+        - bind-utils [platform:rpm]
+        - iputils [platform:rpm]
+        - krb5-libs [platform:rpm]
+        - krb5-workstation [platform:rpm]
+        - tar [platform:rpm]
+        - unzip [platform:rpm]
+      python:
+        - botocore>=1.29.0
+        - boto3>=1.26.0
+      galaxy:
+        collections:
+          - name: ansible.windows
+          - name: community.general
+          - name: community.windows
+          - name: amazon.aws
+            version: '>=7.2.0'
+    build_steps:
+      prepend_final:
+        - ADD _build/windows/krb5.conf /etc/krb5.conf
+        - RUN microdnf install crypto-policies-scripts && update-crypto-policies --set DEFAULT:AD-SUPPORT
+      append_final:
+        - RUN echo "Build Complete"

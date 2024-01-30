@@ -1,0 +1,31 @@
+---
+ee_list:
+  - name: aap_windows_legacy_ee
+    tag: "{{ ansible_date_time.iso8601_basic_short }}"
+    build_files:
+      - src: files/windows_legacy/krb5.conf
+        dest: windows_legacy
+      - src: files/windows_legacy/NOTLS13.pmod
+        dest: windows_legacy
+    build_items:
+      - files/windows_legacy/
+    dependencies:
+      system:
+        - bind-utils [platform:rpm]
+        - iputils [platform:rpm]
+        - krb5-libs [platform:rpm]
+        - krb5-workstation [platform:rpm]
+        - tar [platform:rpm]
+        - unzip [platform:rpm]
+      galaxy:
+        collections:
+          - name: ansible.windows
+          - name: community.general
+          - name: community.windows
+    build_steps:
+      prepend_final:
+        - ADD _build/windows_legacy/krb5.conf /etc/krb5.conf
+        - ADD _build/windows_legacy/NOTLS13.pmod /etc/crypto-policies/policies/modules/NOTLS13.pmod
+        - RUN update-ca-trust && microdnf install crypto-policies-scripts && update-crypto-policies --set DEFAULT:NOTLS13:AD-SUPPORT
+      append_final:
+        - RUN echo "Build Complete"

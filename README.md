@@ -1,28 +1,28 @@
-# ansible_builder
+# Ansible Builder
 
-This repository contains files and playbooks to automate the creation of a custom execution environment (EE) using Ansible Automation Controller. The main playbook `build.yml` is responsible for creating the custom EE. Reference the `infra.ee_utilities` collcetion in the Red Hat COP for more info. <https://github.com/redhat-cop/ee_utilities/tree/2.0.8/roles/ee_builder>
+This repository contains files and playbooks to automate the creation of execution environments (EEs) using Ansible Automation Controller. The main playbook `build_execution_environment.yml` is responsible for creating the EE. Reference the `infra.ee_utilities` collcetion in the Red Hat COP for more info. <https://github.com/redhat-cop/ee_utilities/tree/3.1.2/roles/ee_builder>
 
 ## Prerequisites
 Before using this repository, ensure that the following requirements are met:
 - Ansible Automation Controller is set up and configured.
-- A job template is created with a survey question that prompts for the `__build` variable. In this repo `cisco` would be the answer to the survey options.
-- The execution environment running the job inherits the necessary certificates from controller.
+- Access to the supported [job template](https://automation.uscis.dhs.gov/#/templates/job_template/414/details) or your own job template, with a survey that prompts for the `__build` variable
 
 ## Usage
 
 1. Log into Ansible Automation Controller.
 2. Navigate to the desired job template and launch it.
-3. In the survey section, select `cisco` as the value for the `__build` parameter.
+3. In the survey section, select the value for the `__build` variable.
 4. Proceed with launching the job.
 
 ## File Descriptions
 
-- `build.yml`: The main playbook responsible for creating the custom EE. It includes the necessary roles and performs pre-tasks as a workaround for version 2.0.8 of the `ee_utilities` role. Note that the latest version of the role has a built-in method for including the necessary files.
-  - The pre-tasks in this playbook create the path for the builder and copy extra files to the workstation if the `builder_dir` variable is defined.
-  - The certificates are copied from the execution environment running the job, as `/etc/pki/ca-trust` is exposed in the controller job settings.
+- `build_execution_environment.yml`: The main playbook responsible for creating the custom EE.
 
-- `common.yml`: Configuration file containing variables used in the playbook. Modify this file to customize the environment settings.
+- `vars/common.yml`: Configuration file containing variables used in all execution environments. Modify this file to customize the environment settings.
 
-- `cisco.yml`: Example file specifying the files, certificates, and dependencies required for the custom EE. Modify this file according to your specific needs. I've only included the krb5.conf and certs here to show an example of how to include files; you wouldn't need to include them and I generally don't. 
+- `vars/{{ __build }}.yml`: Example file specifying the files, certificates, and dependencies required for the custom EE. Modify this file according to your specific needs.
 
-Feel free to explore the repository and adapt it to your requirements. If you have any questions reach out.
+- `files/{{ __build}}/*`: Files folder for any additional files that need to be added to the execution environment. Note, you will also need to add the `build_items` and `build_files` variables to your `vars/{{ __build }}` file
+
+## Contributing
+If you or your team has any ee requirements, please open a pull request with your proposed changes that includes a link to your test job run.

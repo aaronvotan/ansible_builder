@@ -1,0 +1,27 @@
+---
+ee_list:
+  - name: aap_rhel_ee
+    tag: "{{ ansible_date_time.iso8601_basic_short }}"
+    dependencies:
+      system:
+        - vim [platform:rpm]
+        - podman [platform:rpm]
+        - bind-utils [platform:rpm]  # provides nslookup
+      python:
+        - boto3>=1.16.0
+        - botocore>=1.19.0
+        - pytz  # for schedule_rrule lookup plugin
+        - python-dateutil>=2.7.0  # schedule_rrule
+        - awxkit  # For import and export modules
+        - hvac  # for hashi_vault plugin
+      galaxy:
+        collections:
+          - name: amazon.aws
+          - name: ansible.windows
+          - name: awx.awx
+          - name: community.general
+          - name: community.vmware
+          - name: community.hashi_vault
+    build_steps:
+      append_final:
+        - RUN echo "Build Complete"

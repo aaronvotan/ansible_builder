@@ -1,0 +1,27 @@
+---
+ee_list:
+  - name: aap_cloud_ee
+    tag: "{{ ansible_date_time.iso8601_basic_short }}"
+    dependencies:
+      system:
+        - python38-requests [platform:rhel-8]
+        - python38-pyyaml [platform:rhel-8]
+        - bind-utils [platform:rpm]
+        - iputils [platform:rpm]
+        - tar [platform:rpm]
+        - unzip [platform:rpm]
+      python:
+        - pytz  # for schedule_rrule lookup plugin
+        - python-dateutil>=2.7.0  # schedule_rrule
+        - hvac  # for hashi_vault plugin
+      galaxy:
+        collections:
+          - name: amazon.aws
+          - name: containers.podman
+          - name: community.general
+          - name: community.vmware
+          - name: ansible.windows
+          - name: community.hashi_vault
+    build_steps:
+      append_final:
+        - RUN echo "Build Complete"
